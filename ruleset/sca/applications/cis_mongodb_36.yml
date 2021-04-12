@@ -63,7 +63,7 @@ checks:
       - https://docs.mongodb.com/v3.6/core/authentication/
     condition: all
     rules:
-      - 'f:$main-conf -> authorization: enabled'
+      - 'c:cat $main-conf | grep "security:" -A4 -> r:authorization: "enabled"'
 #2.2
   - id: 23502
     title: "Ensure that MongoDB does not bypass authentication via the localhost exception"
@@ -77,7 +77,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/parameters/#param.enableLocalhostAuthBypass
     condition: all
     rules:
-      - 'f:$main-conf -> enableLocalhostAuthBypass: false'
+      - 'f:$main-conf -> r:enableLocalhostAuthBypass: (0|false)'
 
 #2.3
   - id: 23503
@@ -94,11 +94,11 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-x509-member-authentication/
     condition: all
     rules:
-      - 'f:$main-conf -> PEMKeyFile'
-      - 'f:$main-conf -> clusterFile'
-      - 'f:$main-conf -> CAFile'
-      - 'f:$main-conf -> clusterAuthMode: x509'
-      - 'f:$main-conf -> authenticationMechanisms: MONGODB-X509'
+      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:PEMKeyFile'
+      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:clusterFile'
+      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:CAFile'
+      - 'c:cat $main-conf | grep "security:" -A10 -> r:clusterAuthMode: "x509"'
+      - 'c:cat $main-conf | grep "security:" -A10 -> r:authenticationMechanisms: "MONGODB-X509"'
 
 #3 Access Control
 #3.1 - Requires mongo shell commands, currently not supported
@@ -120,7 +120,7 @@ checks:
       - https://docs.mongodb.com/v3.6/core/security-network/
     condition: all
     rules:
-      - 'f:$main-conf -> bindIp'
+      - 'c:cat $main-conf | grep "net:" -A12 -> r:bindIp'
 
 #3.3
   - id: 23506
@@ -135,7 +135,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/manage-users-and-roles/
     condition: all
     rules:
-      - 'c:ps -aef | grep mongod -> root'
+      - 'not c:ps -aef | grep mongod -> r:root'
 
 #3.4 - Requires mongo shell commands, currently not supported
 #  - id: 23507
@@ -167,7 +167,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-x509-member-authentication/
     condition: all
     rules:
-      - 'f:$main-conf -> mode: requireSSL'
+      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:mode: "requireSSL"'
 
 #4.2
   - id: 23511
@@ -182,7 +182,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-fips/
     condition: all
     rules:
-      - 'f:$main-conf -> FIPSMode: true'
+      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:FIPSMode: (1|true)'
 
 #4.3 - Does not provide audit steps
 #  - id: 23512
@@ -202,7 +202,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-auditing/
     condition: all
     rules:
-      - 'f:$main-conf -> auditLog'
+      - 'c:cat $main-conf | grep "auditLog" -A4 -> r:destination'
 
 #5.2
   - id: 23514
@@ -218,7 +218,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-audit-filters/
     condition: all
     rules:
-      - 'f:$main-conf -> filter'
+      - 'c:cat $main-conf | grep "auditLog" -A10 -> r:filter'
 
 #5.3
   - id: 23515
@@ -233,7 +233,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#systemLog.quiet
     condition: all
     rules:
-      - 'f:$main-conf -> quiet: false'
+      - 'f:$main-conf -> r:quiet: (0|false)'
 
 #5.4
   - id: 23516
@@ -248,7 +248,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#systemLog.logAppend
     condition: all
     rules:
-      - 'f:$main-conf -> logAppend: true'
+      - 'c:cat $main-conf | grep "systemLog" -A10 -> r:logAppend: (1|true)'
 
 #6 Operating System Hardening
 #6.1
@@ -264,7 +264,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/default-mongodb-port/
     condition: all
     rules:
-      - 'not f:$main-conf -> port: 27017'
+      - 'not f:$main-conf -> r:port: 27017'
 
 #6.2 - Has to be done manually as it is specific to the MongoDB deployment
 #  - id: 23518
@@ -283,7 +283,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#security.javascriptEnabled
     condition: all
     rules:
-      - 'f:$main-conf -> javascriptEnabled: false'
+      - 'c:cat $main-conf | grep "security" -A10 -> r:javascriptEnabled: (0|false)'
 
 #7 File Permissions
 #7.1 - Has to be done manually as it is specific to the MongoDB deployment
