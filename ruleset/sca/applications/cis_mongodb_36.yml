@@ -187,7 +187,7 @@ checks:
 
 #4.3 - Does not provide audit steps
 #  - id: 23512
-#    title: "Review Superuser/Admin Roles"
+#    title: "Ensure Encryption of Data at Rest"
 
 #5 Auditing
 #5.1
