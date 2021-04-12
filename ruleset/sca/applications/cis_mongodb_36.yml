@@ -63,7 +63,8 @@ checks:
       - https://docs.mongodb.com/v3.6/core/authentication/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "security:" -A4 -> r:authorization: "enabled"'
+      - 'c:cat /etc/mongod.conf | grep \-A4 "security:" -> r:authorization: "enabled"'
+      
 #2.2
   - id: 23502
     title: "Ensure that MongoDB does not bypass authentication via the localhost exception"
@@ -77,7 +78,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/parameters/#param.enableLocalhostAuthBypass
     condition: all
     rules:
-      - 'f:$main-conf -> r:enableLocalhostAuthBypass: (0|false)'
+      - 'f:$main-conf -> r:enableLocalhostAuthBypass: 0|false'
 
 #2.3
   - id: 23503
@@ -94,11 +95,11 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-x509-member-authentication/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:PEMKeyFile'
-      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:clusterFile'
-      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:CAFile'
-      - 'c:cat $main-conf | grep "security:" -A10 -> r:clusterAuthMode: "x509"'
-      - 'c:cat $main-conf | grep "security:" -A10 -> r:authenticationMechanisms: "MONGODB-X509"'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "ssl:" -> r:PEMKeyFile'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "ssl:" -> r:clusterFile'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "ssl:" -> r:CAFile'
+      - 'c:cat /etc/mongod.conf | grep \-A10 "security:" -> r:clusterAuthMode: "x509"'
+      - 'c:cat /etc/mongod.conf | grep \-A10 "security:" -> r:authenticationMechanisms: "MONGODB-X509"'
 
 #3 Access Control
 #3.1 - Requires mongo shell commands, currently not supported
@@ -120,7 +121,7 @@ checks:
       - https://docs.mongodb.com/v3.6/core/security-network/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "net:" -A12 -> r:bindIp'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "net:" -> r:bindIp'
 
 #3.3
   - id: 23506
@@ -167,7 +168,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-x509-member-authentication/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:mode: "requireSSL"'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "ssl:" -> r:mode: "requireSSL"'
 
 #4.2
   - id: 23511
@@ -182,7 +183,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-fips/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "ssl:" -A12 -> r:FIPSMode: (1|true)'
+      - 'c:cat /etc/mongod.conf | grep \-A12 "ssl:" -> r:FIPSMode: 1|true'
 
 #4.3 - Does not provide audit steps
 #  - id: 23512
@@ -202,7 +203,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-auditing/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "auditLog" -A4 -> r:destination'
+      - 'c:cat /etc/mongod.conf | grep \-A4 "auditLog" -> r:destination'
 
 #5.2
   - id: 23514
@@ -218,7 +219,7 @@ checks:
       - https://docs.mongodb.com/v3.6/tutorial/configure-audit-filters/
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "auditLog" -A10 -> r:filter'
+      - 'c:cat /etc/mongod.conf | grep \-A10 "auditLog" -> r:filter'
 
 #5.3
   - id: 23515
@@ -233,7 +234,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#systemLog.quiet
     condition: all
     rules:
-      - 'f:$main-conf -> r:quiet: (0|false)'
+      - 'f:$main-conf -> r:quiet: 0|false'
 
 #5.4
   - id: 23516
@@ -248,7 +249,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#systemLog.logAppend
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "systemLog" -A10 -> r:logAppend: (1|true)'
+      - 'c:cat /etc/mongod.conf | grep \-A10 "systemLog" -> r:logAppend: 1|true'
 
 #6 Operating System Hardening
 #6.1
@@ -283,7 +284,7 @@ checks:
       - https://docs.mongodb.com/v3.6/reference/configuration-options/#security.javascriptEnabled
     condition: all
     rules:
-      - 'c:cat $main-conf | grep "security" -A10 -> r:javascriptEnabled: (0|false)'
+      - 'c:cat /etc/mongod.conf | grep \-A10 "security" -> r:javascriptEnabled: 0|false'
 
 #7 File Permissions
 #7.1 - Has to be done manually as it is specific to the MongoDB deployment
